@@ -1,0 +1,166 @@
+:root {
+  color-scheme: light dark;
+  font-family: -apple-system, BlinkMacSystemFont, "Hiragino Sans", "Yu Gothic", sans-serif;
+  background: #0b1020;
+  color: #f8fafc;
+  font-synthesis: none;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(180deg, #111827 0%, #070a12 100%);
+}
+
+button, input { font: inherit; }
+button { -webkit-tap-highlight-color: transparent; }
+
+.app-shell {
+  width: min(100%, 560px);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: max(20px, env(safe-area-inset-top)) 20px max(28px, env(safe-area-inset-bottom));
+}
+
+.topbar,
+.records-header,
+.month-nav,
+.summary-card,
+.record-count-card,
+.dialog-actions,
+.backup-actions {
+  display: flex;
+  align-items: center;
+}
+
+.topbar { justify-content: space-between; gap: 16px; margin-bottom: 28px; }
+.eyebrow, .section-label { margin: 0; font-size: .75rem; letter-spacing: .12em; color: #94a3b8; }
+h1 { margin: 4px 0 0; font-size: 1.55rem; }
+h2 { margin: 0; }
+
+.icon-button,
+.text-button,
+.month-button {
+  border: 0;
+  background: transparent;
+  color: #cbd5e1;
+  cursor: pointer;
+}
+
+.icon-button {
+  border: 1px solid #334155;
+  border-radius: 999px;
+  padding: 10px 14px;
+}
+
+.view { display: none; }
+.view.active { display: block; }
+
+.hero-card,
+.summary-card,
+.record-count-card,
+.backup-panel {
+  border: 1px solid #263246;
+  background: rgba(17, 24, 39, .86);
+  border-radius: 24px;
+}
+
+.hero-card { padding: 30px 22px 24px; text-align: center; }
+.elapsed {
+  margin: 18px 0 10px;
+  font-size: clamp(2.5rem, 12vw, 4.2rem);
+  font-weight: 800;
+  letter-spacing: -.05em;
+  line-height: 1;
+}
+.muted, .privacy-note, .backup-panel p { color: #94a3b8; line-height: 1.7; }
+.muted { margin: 0 0 24px; }
+
+.primary-button,
+.danger-button,
+.secondary-button {
+  width: 100%;
+  border: 0;
+  border-radius: 16px;
+  padding: 15px 18px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.primary-button { background: #f8fafc; color: #0f172a; }
+.danger-button { background: #e11d48; color: white; }
+.secondary-button { background: #243044; color: #e2e8f0; text-align: center; }
+.hidden { display: none; }
+
+.summary-card {
+  width: 100%;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 16px;
+  padding: 18px 20px;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.summary-card strong { display: block; margin-top: 5px; }
+.count { font-size: 1.8rem; }
+.privacy-note { font-size: .82rem; padding: 0 8px; }
+
+.records-header { justify-content: space-between; margin-bottom: 24px; }
+.records-header .spacer { width: 48px; }
+.text-button { padding: 10px 0; }
+.month-nav {
+  justify-content: space-between;
+  border-bottom: 1px solid #263246;
+  padding: 6px 4px 18px;
+  text-align: center;
+}
+.month-nav strong { display: block; margin-top: 5px; font-size: 1.15rem; }
+.month-button { width: 48px; height: 48px; font-size: 2rem; }
+.record-count-card { justify-content: space-between; margin: 18px 0; padding: 18px 20px; }
+.record-count-card strong { font-size: 1.5rem; }
+
+.records-list { list-style: none; padding: 0; margin: 0; }
+.records-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 4px;
+  border-bottom: 1px solid #1f2937;
+}
+.records-list .record-index { color: #64748b; min-width: 2em; }
+.records-list time { margin-left: auto; }
+.empty-state { text-align: center; color: #64748b; padding: 34px 0; }
+
+.backup-panel { margin-top: 28px; padding: 18px; }
+.backup-panel summary { cursor: pointer; font-weight: 700; }
+.backup-actions { gap: 10px; flex-wrap: wrap; }
+.backup-actions > * { flex: 1 1 180px; }
+.file-label { display: block; cursor: pointer; }
+.file-label input { display: none; }
+
+.dialog {
+  width: min(calc(100% - 32px), 440px);
+  border: 1px solid #334155;
+  border-radius: 24px;
+  background: #111827;
+  color: #f8fafc;
+  padding: 22px;
+}
+.dialog::backdrop { background: rgba(0, 0, 0, .66); }
+.dialog p { color: #94a3b8; line-height: 1.65; }
+.dialog-actions { gap: 10px; margin-top: 20px; }
+
+@media (prefers-color-scheme: light) {
+  :root { background: #f1f5f9; color: #0f172a; }
+  body { background: linear-gradient(180deg, #f8fafc 0%, #e2e8f0 100%); }
+  .hero-card, .summary-card, .record-count-card, .backup-panel, .dialog {
+    background: rgba(255,255,255,.92);
+    border-color: #dbe3ee;
+  }
+  .icon-button, .text-button, .month-button { color: #475569; }
+  .icon-button { border-color: #cbd5e1; }
+  .secondary-button { background: #e2e8f0; color: #0f172a; }
+  .records-list li, .month-nav { border-color: #e2e8f0; }
+}
