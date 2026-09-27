@@ -121,6 +121,7 @@ h2 { margin: 0; }
 .record-count-card { justify-content: space-between; margin: 18px 0; padding: 18px 20px; }
 .record-count-card strong { font-size: 1.5rem; }
 
+.records-caption { margin: 6px 4px 8px; color: #94a3b8; font-size: .9rem; }
 .records-list { list-style: none; padding: 0; margin: 0; }
 .records-list li {
   display: flex;
@@ -130,7 +131,7 @@ h2 { margin: 0; }
   border-bottom: 1px solid #1f2937;
 }
 .records-list .record-index { color: #64748b; min-width: 2em; }
-.records-list time { margin-left: auto; }
+.records-list time, .records-list .record-interval { margin-left: auto; font-variant-numeric: tabular-nums; }
 .empty-state { text-align: center; color: #64748b; padding: 34px 0; }
 
 .backup-panel { margin-top: 28px; padding: 18px; }
