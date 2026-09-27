@@ -2,6 +2,7 @@ const STORAGE_KEY = "personalTimer.v1";
 
 const defaultState = () => ({
   startedAt: null,
+  firstStartedAt: null,
   resets: []
 });
 
@@ -10,9 +11,16 @@ function loadState() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return defaultState();
     const parsed = JSON.parse(raw);
+    const resets = Array.isArray(parsed.resets) ? parsed.resets.filter(x => typeof x === "string") : [];
+    const startedAt = typeof parsed.startedAt === "string" ? parsed.startedAt : null;
     return {
-      startedAt: typeof parsed.startedAt === "string" ? parsed.startedAt : null,
-      resets: Array.isArray(parsed.resets) ? parsed.resets.filter(x => typeof x === "string") : []
+      startedAt,
+      // v1からの移行対応。まだ一度もリセットしていない場合は、現在の開始日時を初回開始日時として引き継げる。
+      // すでにリセット履歴がある旧データでは、最初の開始日時は保存されていなかったため復元できない。
+      firstStartedAt: typeof parsed.firstStartedAt === "string"
+        ? parsed.firstStartedAt
+        : (resets.length === 0 ? startedAt : null),
+      resets
     };
   } catch {
     return defaultState();
@@ -68,6 +76,33 @@ function formatDateTime(iso) {
   }).format(new Date(iso));
 }
 
+function formatInterval(ms) {
+  if (ms == null || !Number.isFinite(ms) || ms < 0) return "記録なし";
+  const totalMinutes = Math.floor(ms / 60000);
+  const days = Math.floor(totalMinutes / 1440);
+  const hours = Math.floor((totalMinutes % 1440) / 60);
+  const minutes = totalMinutes % 60;
+
+  if (days > 0) return `${days}日 ${hours}時間 ${minutes}分`;
+  if (hours > 0) return `${hours}時間 ${minutes}分`;
+  return `${minutes}分`;
+}
+
+function intervalBeforeReset(resetIso) {
+  const ordered = state.resets
+    .filter(x => typeof x === "string")
+    .slice()
+    .sort((a, b) => new Date(a) - new Date(b));
+
+  const index = ordered.indexOf(resetIso);
+  if (index < 0) return null;
+
+  const previousIso = index > 0 ? ordered[index - 1] : state.firstStartedAt;
+  if (!previousIso) return null;
+
+  return new Date(resetIso).getTime() - new Date(previousIso).getTime();
+}
+
 function monthLabel(date) {
   return new Intl.DateTimeFormat("ja-JP", { year: "numeric", month: "long" }).format(date);
 }
@@ -115,14 +150,11 @@ function renderRecords() {
     number.className = "record-index";
     number.textContent = `${resets.length - index}.`;
 
-    const time = document.createElement("time");
-    time.dateTime = date.toISOString();
-    time.textContent = new Intl.DateTimeFormat("ja-JP", {
-      month: "numeric", day: "numeric", weekday: "short",
-      hour: "2-digit", minute: "2-digit", second: "2-digit"
-    }).format(date);
+    const interval = document.createElement("span");
+    interval.className = "record-interval";
+    interval.textContent = formatInterval(intervalBeforeReset(date.toISOString()));
 
-    li.append(number, time);
+    li.append(number, interval);
     recordsList.appendChild(li);
   });
 
@@ -148,7 +180,9 @@ function openTimer() {
 }
 
 startButton.addEventListener("click", () => {
-  state.startedAt = new Date().toISOString();
+  const now = new Date().toISOString();
+  state.startedAt = now;
+  state.firstStartedAt = now;
   saveState();
   updateTimer();
 });
@@ -218,9 +252,14 @@ importInput.addEventListener("change", async () => {
     const ok = confirm("現在の記録を読み込んだバックアップで置き換えます。よろしいですか？");
     if (!ok) return;
 
+    const resets = incoming.resets.filter(x => typeof x === "string");
+    const startedAt = typeof incoming.startedAt === "string" ? incoming.startedAt : null;
     state = {
-      startedAt: typeof incoming.startedAt === "string" ? incoming.startedAt : null,
-      resets: incoming.resets.filter(x => typeof x === "string")
+      startedAt,
+      firstStartedAt: typeof incoming.firstStartedAt === "string"
+        ? incoming.firstStartedAt
+        : (resets.length === 0 ? startedAt : null),
+      resets
     };
     saveState();
     updateTimer();
