@@ -131,7 +131,8 @@ h2 { margin: 0; }
   border-bottom: 1px solid #1f2937;
 }
 .records-list .record-index { color: #64748b; min-width: 2em; }
-.records-list time, .records-list .record-interval { margin-left: auto; font-variant-numeric: tabular-nums; }
+.records-list .record-date { color: #cbd5e1; white-space: nowrap; }
+.records-list time, .records-list .record-interval { margin-left: auto; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .empty-state { text-align: center; color: #64748b; padding: 34px 0; }
 
 .backup-panel { margin-top: 28px; padding: 18px; }
@@ -164,4 +165,5 @@ h2 { margin: 0; }
   .icon-button { border-color: #cbd5e1; }
   .secondary-button { background: #e2e8f0; color: #0f172a; }
   .records-list li, .month-nav { border-color: #e2e8f0; }
+  .records-list .record-date { color: #475569; }
 }

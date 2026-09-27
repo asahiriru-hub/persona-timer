@@ -76,6 +76,23 @@ function formatDateTime(iso) {
   }).format(new Date(iso));
 }
 
+// 生活上の「1日」は午前4時に切り替わる。
+// 例: 9/28 02:30 のリセットは、記録上は 9/27 の出来事として扱う。
+function eventDate(dateLike) {
+  const date = new Date(dateLike);
+  const adjusted = new Date(date);
+  if (adjusted.getHours() < 4) {
+    adjusted.setDate(adjusted.getDate() - 1);
+  }
+  return adjusted;
+}
+
+function formatEventDate(dateLike) {
+  const date = eventDate(dateLike);
+  const weekday = new Intl.DateTimeFormat("ja-JP", { weekday: "short" }).format(date);
+  return `${date.getMonth() + 1}月${date.getDate()}日(${weekday})`;
+}
+
 function formatInterval(ms) {
   if (ms == null || !Number.isFinite(ms) || ms < 0) return "記録なし";
   const totalMinutes = Math.floor(ms / 60000);
@@ -112,7 +129,10 @@ function resetsForMonth(date) {
   const month = date.getMonth();
   return state.resets
     .map(iso => new Date(iso))
-    .filter(d => d.getFullYear() === year && d.getMonth() === month)
+    .filter(d => {
+      const event = eventDate(d);
+      return event.getFullYear() === year && event.getMonth() === month;
+    })
     .sort((a, b) => b - a);
 }
 
@@ -150,11 +170,15 @@ function renderRecords() {
     number.className = "record-index";
     number.textContent = `${resets.length - index}.`;
 
+    const event = document.createElement("span");
+    event.className = "record-date";
+    event.textContent = formatEventDate(date);
+
     const interval = document.createElement("span");
     interval.className = "record-interval";
     interval.textContent = formatInterval(intervalBeforeReset(date.toISOString()));
 
-    li.append(number, interval);
+    li.append(number, event, interval);
     recordsList.appendChild(li);
   });
 
